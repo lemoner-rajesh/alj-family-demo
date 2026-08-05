@@ -33,7 +33,7 @@ export default function CoupleUnit({ person, selectedId, onSelect, query, onTogg
             aria-label={showSpouse ? "Hide spouse" : "Show spouse"}
             title={showSpouse ? "Hide spouse" : `Show spouse: ${person.spouse.name}`}
           >
-            ⚭
+            M
           </button>
         )}
 

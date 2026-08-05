@@ -22,7 +22,6 @@ export default function HomePage() {
       total: flat.length,
       generations: generations.size,
       bios: flat.filter((e) => e.person.hasBio).length,
-      unverified: flat.filter((e) => e.person.unverified).length,
     };
   }, [flat]);
 
@@ -93,6 +92,7 @@ export default function HomePage() {
       {selectedPerson && (
         <DetailDrawer
           person={selectedPerson}
+          gen={selectedGeneration}
           generationLabel={GENERATION_LABELS[selectedGeneration] || `Generation ${selectedGeneration}`}
           relations={relations}
           onClose={() => setSelectedId(null)}

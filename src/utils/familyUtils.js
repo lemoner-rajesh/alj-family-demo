@@ -35,6 +35,19 @@ export function matchesQuery(person, query) {
   );
 }
 
+const TITLE_WORDS = new Set(["eng.", "eng", "dr.", "dr", "sh.", "sh", "kbe", "jr", "jr."]);
+
+// Initials for the drawer avatar — skips honorifics/titles so "Eng.
+// Mohammed Jameel, KBE" reads as "MJ" rather than "EM".
+export function getInitials(name) {
+  const words = name
+    .replace(/[,.]/g, " ")
+    .split(/\s+/)
+    .filter((w) => w && !TITLE_WORDS.has(w.toLowerCase()) && /[a-zA-Z]/.test(w));
+  const letters = words.slice(0, 2).map((w) => w[0].toUpperCase());
+  return letters.join("") || name.slice(0, 2).toUpperCase();
+}
+
 export function lifeSpan(person) {
   const born = person.born || "YYYY";
   const died = person.died ? person.died : person.died === 0 ? "0" : "";
@@ -116,8 +129,8 @@ export function genColorIndex(gen) {
   return Math.max(0, Math.min(gen - 1, 4));
 }
 
-// The Founder (0) and Origins (1) rows are a single-child chain with no
-// real siblings — collapsing either one hides essentially the entire tree,
-// which reads as the whole page breaking rather than a useful collapse.
-// Every renderer hides the toggle above this depth.
-export const MIN_COLLAPSIBLE_GEN = 2;
+// Only the Founder (0) is a lone single-child link with no siblings —
+// collapsing it hides essentially the entire tree, which reads as the page
+// breaking rather than a useful collapse. Origins (1) onward do have real
+// value in collapsing, so the toggle is hidden only for depth 0.
+export const MIN_COLLAPSIBLE_GEN = 1;

@@ -29,7 +29,7 @@ export default function TimelinePair({ person, selectedId, onSelect, query }) {
           aria-label={showSpouse ? "Hide spouse" : "Show spouse"}
           title={showSpouse ? "Hide spouse" : `Show spouse: ${person.spouse.name}`}
         >
-          ⚭
+          M
         </button>
       )}
 

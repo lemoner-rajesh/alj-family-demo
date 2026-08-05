@@ -1,18 +1,10 @@
 import { GENERATION_LABELS } from "../utils/familyUtils";
 
-export default function Legend() {
+export default function Legend({ hint }) {
   return (
     <div className="legend">
       <span className="legend__item">
-        <span className="badge badge--bio">View Bio</span>
-        family members publicly active in today's businesses or philanthropies
-      </span>
-      <span className="legend__item">
-        <span className="badge badge--unverified">Unverified</span>
-        name, dates, or relationship flagged for further research
-      </span>
-      <span className="legend__item">
-        <span className="marriage-glyph marriage-glyph--static">⚭</span>
+        <span className="marriage-glyph marriage-glyph--static">M</span>
         marriage
       </span>
 
@@ -24,6 +16,8 @@ export default function Legend() {
           </span>
         ))}
       </span>
+
+      {hint && <span className="legend__hint">{hint}</span>}
     </div>
   );
 }

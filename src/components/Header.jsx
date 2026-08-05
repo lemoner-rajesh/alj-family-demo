@@ -2,12 +2,14 @@ import SearchBar from "./SearchBar";
 import Legend from "./Legend";
 
 export default function Header({ view, onViewChange, query, onQueryChange, stats, onExpandAll, onCollapseAll }) {
+  const hint =
+    view === "tree" ? "Click a card for details · click ⊕ to open a branch" : "Click a card for details";
+
   return (
     <header className="app-header">
       <div className="app-header__top">
         <div className="app-header__title">
           <h1>The Jameel Family</h1>
-          <p>Interactive family tree prototype — parents, marriages, and four generations of descendants.</p>
         </div>
 
         <div className="app-header__stats">
@@ -22,10 +24,6 @@ export default function Header({ view, onViewChange, query, onQueryChange, stats
           <div className="stat">
             <span className="stat__value">{stats.bios}</span>
             <span className="stat__label">Bios on file</span>
-          </div>
-          <div className="stat">
-            <span className="stat__value">{stats.unverified}</span>
-            <span className="stat__label">Need research</span>
           </div>
         </div>
       </div>
@@ -64,15 +62,9 @@ export default function Header({ view, onViewChange, query, onQueryChange, stats
             </button>
           </div>
         )}
-
-        <span className="app-header__hint">
-          {view === "tree"
-            ? "Click a card for details · click ⊕ to open a branch"
-            : "Click a card for details"}
-        </span>
       </div>
 
-      <Legend />
+      <Legend hint={hint} />
     </header>
   );
 }

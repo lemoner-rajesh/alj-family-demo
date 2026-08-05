@@ -65,9 +65,9 @@ const sarasKids = [
 ];
 
 const fadysKids = [
-  person({ name: "Unnamed child", unverified: true, note: "Marked [NAME] on the source chart — not yet identified." }),
-  person({ name: "Unnamed child", unverified: true, note: "Marked [NAME] on the source chart — not yet identified." }),
-  person({ name: "Unnamed child", unverified: true, note: "Marked [NAME] on the source chart — not yet identified." }),
+  person({ name: "[NAME]", unverified: true, note: "Marked [NAME] on the source chart — not yet identified." }),
+  person({ name: "[NAME]", unverified: true, note: "Marked [NAME] on the source chart — not yet identified." }),
+  person({ name: "[NAME]", unverified: true, note: "Marked [NAME] on the source chart — not yet identified." }),
 ];
 
 // ---- Generation 3 (grandchildren) ----
@@ -169,13 +169,13 @@ const fady = person({
 });
 
 const mysterySister = person({
-  name: "Unnamed sister",
+  name: "[SISTER?]",
   gender: "f",
   unverified: true,
   note: "Marked \"[SISTER?]\" on the source chart — identity unconfirmed.",
   businesses: ["haljgroup.com", "hadya.com"],
   spouse: person({
-    name: "Unnamed spouse",
+    name: "[NAME] Al Haddad",
     gender: "m",
     unverified: true,
     note: "Recorded only as \"[NAME] Al Haddad\" on the source chart, directly beneath this entry — the marriage itself is not explicitly confirmed.",
@@ -207,7 +207,7 @@ const nagia = person({
   businesses: ["aljhospital.com", "dataocean.com", "najtech.com.sa"],
   children: [hisham, aladin, majed],
   spouse: person({
-    name: "Unnamed spouse",
+    name: "[NAME] Hamza",
     gender: "m",
     unverified: true,
     note: "Recorded only as \"[NAME] Hamza\" on the source chart.",
@@ -241,7 +241,7 @@ const mohammedKbe = person({
   businesses: ["alj.com", "communityjameel.org", "communityjameelsaudi.org", "artjameel.org", "bcj.com.sa"],
   children: [hassan, husseinJr, fady, mysterySister],
   spouse: person({
-    name: "Unnamed spouse",
+    name: "[NAME]",
     gender: "f",
     unverified: true,
     note: "Recorded only as \"[NAME]\" on the source chart.",
@@ -299,7 +299,7 @@ const abdulaziz = person({
 });
 
 const unnamedBrother = person({
-  name: "Unnamed brother",
+  name: "BROTHER",
   gender: "m",
   unverified: true,
   note: "Recorded only as \"BROTHER\" on the source chart.",
@@ -333,8 +333,3 @@ export const familyRoot = person({
 // Generation-3 branches with the most great-grandchildren are collapsed
 // by default so the initial tree view isn't overwhelming.
 export const defaultCollapsedIds = [abir.id, ghadah.id, ihab.id, faisal.id, saraFawaz.id];
-
-export const legend = {
-  bio: "Publicly active in today's businesses or philanthropies — has a full biography on file.",
-  unverified: "Name, dates, or relationship not yet confirmed — flagged for research.",
-};
