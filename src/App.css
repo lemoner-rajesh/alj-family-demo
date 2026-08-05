@@ -1491,10 +1491,11 @@
 
 .grp-edges path {
   fill: none;
-  stroke: #c7cdd6;
-  stroke-width: 1.5;
+  stroke: var(--row-color, #c7cdd6);
+  stroke-width: 1.75;
   stroke-linejoin: round;
   stroke-linecap: round;
+  opacity: 0.6;
 }
 
 .grp-node {
@@ -1520,8 +1521,9 @@
   position: relative;
   background: #f4f5f7;
   border: 1px solid #e7e9ed;
+  border-left: 4px solid var(--row-color, #2f6fbf);
   border-radius: 16px;
-  padding: 26px 30px 20px;
+  padding: 30px 34px 20px 27px;
 }
 
 .grp-pair {
@@ -1553,7 +1555,7 @@
   width: 62px;
   height: 62px;
   border-radius: 50%;
-  border: 3px solid #2f6fbf;
+  border: 3px solid var(--row-color, #2f6fbf);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1673,25 +1675,51 @@
 
 .grp-collapse {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 24px;
-  height: 24px;
-  border-radius: 6px;
+  top: 8px;
+  right: 8px;
+  z-index: 5;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
   background: #fff;
-  border: 1px solid #d8dce3;
-  color: #8492a6;
-  font-size: 0.9rem;
+  border: 1px solid #b9c1cc;
+  color: #4a5568;
+  font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 
 .grp-collapse:hover {
   border-color: #2f6fbf;
   color: #2f6fbf;
+}
+
+.grp-legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 0 40px 18px;
+  font-size: 0.76rem;
+  color: #718096;
+}
+
+.grp-legend__item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.grp-legend__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--row-color);
+  flex-shrink: 0;
 }
 
 /* ---------- Responsive ---------- */

@@ -1,12 +1,12 @@
-import { avatarColor, lifeSpan } from "../utils/familyUtils";
+import { avatarColor, genColorIndex, lifeSpan } from "../utils/familyUtils";
 
-export default function GroupCard({ person, isSelected, isMatch, dimmed, onSelect }) {
+export default function GroupCard({ person, isSelected, isMatch, dimmed, onSelect, gen }) {
   return (
     <button
       type="button"
       className={[
         "grp-card",
-        person.unverified ? "grp-card--u" : "",
+        person.unverified ? "grp-card--u" : `gen-${genColorIndex(gen)}`,
         isSelected ? "is-selected" : "",
         isMatch ? "is-match" : "",
         dimmed ? "is-dimmed" : "",

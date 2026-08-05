@@ -4,6 +4,14 @@ import DetailDrawer from "../components/DetailDrawer";
 import { familyRoot, defaultCollapsedIds } from "../data/familyData";
 import { buildIndex, searchOpenPath, getRelations, GENERATION_LABELS } from "../utils/familyUtils";
 
+const GEN_LEGEND = [
+  { cls: "gen-0", label: "Origins" },
+  { cls: "gen-1", label: "Generation 1" },
+  { cls: "gen-2", label: "Generation 2" },
+  { cls: "gen-3", label: "Generation 3" },
+  { cls: "gen-4", label: "Generation 4" },
+];
+
 // A fifth treatment, modeled on the BALKANGraph-style "grouped" org chart
 // reference: light page, couples wrapped in a soft gray box only when they
 // have children to collapse, blue name/date tags under circular avatars.
@@ -62,6 +70,15 @@ export default function Option5Page({ onBack }) {
           onChange={(e) => setQuery(e.target.value)}
           aria-label="Search family members"
         />
+      </div>
+
+      <div className="grp-legend">
+        {GEN_LEGEND.map((item) => (
+          <span className="grp-legend__item" key={item.cls}>
+            <span className={`grp-legend__dot ${item.cls}`} />
+            {item.label}
+          </span>
+        ))}
       </div>
 
       <FamilyGroupTree

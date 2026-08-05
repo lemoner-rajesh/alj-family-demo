@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import GroupTreeNode from "./GroupTreeNode";
 import { useMeasuredEdges } from "../useMeasuredEdges";
-import { collectEdges } from "../utils/familyUtils";
+import { collectEdges, genColorIndex } from "../utils/familyUtils";
 
 const buildElbowPath = (x1, y1, x2, y2) => {
   const midY = y1 + (y2 - y1) / 2;
@@ -17,7 +17,7 @@ export default function FamilyGroupTree({ root, collapsed, onToggle, selectedId,
       <div className="grp-canvas" ref={canvasRef}>
         <svg className="grp-edges" width={canvasSize.width} height={canvasSize.height} aria-hidden="true">
           {edgePaths.map((p) => (
-            <path key={p.id} d={p.d} />
+            <path key={p.id} d={p.d} className={`gen-${genColorIndex(p.edge.childGen)}`} />
           ))}
         </svg>
 

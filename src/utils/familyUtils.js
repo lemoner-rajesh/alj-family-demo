@@ -123,15 +123,16 @@ export function buildVisibleRows(root, collapsed, forceOpenIds) {
   return { order, rowMap, edges };
 }
 
-// Flat {parentId, childId} edge list for a plain recursive node-link
-// layout (no generation-row grouping) — used by the free-form tree view.
-export function collectEdges(root, collapsed, forceOpenIds, edges = []) {
+// Flat {parentId, childId, childGen} edge list for a plain recursive
+// node-link layout (no generation-row grouping) — used by the free-form
+// tree views. childGen lets renderers color connector lines by generation.
+export function collectEdges(root, collapsed, forceOpenIds, gen = 0, edges = []) {
   const isOpen = forceOpenIds.has(root.id) || !collapsed.has(root.id);
   const kids = root.children || [];
   if (kids.length > 0 && isOpen) {
     kids.forEach((child) => {
-      edges.push({ parentId: root.id, childId: child.id });
-      collectEdges(child, collapsed, forceOpenIds, edges);
+      edges.push({ parentId: root.id, childId: child.id, childGen: gen + 1 });
+      collectEdges(child, collapsed, forceOpenIds, gen + 1, edges);
     });
   }
   return edges;

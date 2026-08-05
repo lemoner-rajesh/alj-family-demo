@@ -1,6 +1,6 @@
 import { useState } from "react";
 import GroupCard from "./GroupCard";
-import { matchesQuery, MIN_COLLAPSIBLE_GEN } from "../utils/familyUtils";
+import { matchesQuery, genColorIndex, MIN_COLLAPSIBLE_GEN } from "../utils/familyUtils";
 
 // Matches the reference's convention: a couple only gets the light gray
 // "group" box (with the corner collapse chevron) when they actually have
@@ -14,6 +14,7 @@ export default function GroupCoupleUnit({ person, selectedId, onSelect, onToggle
   const spouseMatches = person.spouse && searching && matchesQuery(person.spouse, query);
   const spouseSelected = person.spouse && selectedId === person.spouse.id;
   const showSpouse = person.spouse && (spouseOpen || spouseMatches || spouseSelected);
+  const genClass = `gen-${genColorIndex(gen)}`;
 
   const pairContent = (
     <>
@@ -23,6 +24,7 @@ export default function GroupCoupleUnit({ person, selectedId, onSelect, onToggle
         isMatch={searching && matchesQuery(person, query)}
         dimmed={searching && !selfMatch}
         onSelect={onSelect}
+        gen={gen}
       />
 
       {person.spouse && (
@@ -43,6 +45,7 @@ export default function GroupCoupleUnit({ person, selectedId, onSelect, onToggle
           isMatch={searching && matchesQuery(person.spouse, query)}
           dimmed={searching && !selfMatch}
           onSelect={onSelect}
+          gen={gen}
         />
       )}
     </>
@@ -57,7 +60,7 @@ export default function GroupCoupleUnit({ person, selectedId, onSelect, onToggle
   }
 
   return (
-    <div className="grp-box" ref={(el) => registerNode(person.id, el)}>
+    <div className={`grp-box ${genClass}`} ref={(el) => registerNode(person.id, el)}>
       <div className="grp-pair">{pairContent}</div>
       <button
         type="button"
