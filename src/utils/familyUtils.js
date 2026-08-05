@@ -35,28 +35,6 @@ export function matchesQuery(person, query) {
   );
 }
 
-const TITLE_WORDS = new Set(["eng.", "eng", "dr.", "dr", "sh.", "sh", "jr.", "jr", "kbe", "unnamed"]);
-
-export function getInitials(name) {
-  const words = name
-    .replace(/[,.]/g, " ")
-    .split(/\s+/)
-    .filter((w) => w && !TITLE_WORDS.has(w.toLowerCase()));
-  const letters = words.slice(0, 2).map((w) => w[0].toUpperCase());
-  return letters.join("") || name.slice(0, 2).toUpperCase();
-}
-
-const AVATAR_COLORS = ["#5b8dd6", "#d97757", "#4fae8f", "#b06fd9", "#d9a23f", "#5fb3c7", "#c76b9c", "#7a8fa6"];
-
-// Deterministic color per person so dummy avatars look distinct without
-// depicting any real likeness.
-export function avatarColor(person) {
-  const key = person.id || person.name;
-  let hash = 0;
-  for (let i = 0; i < key.length; i++) hash = (hash * 31 + key.charCodeAt(i)) >>> 0;
-  return AVATAR_COLORS[hash % AVATAR_COLORS.length];
-}
-
 export function lifeSpan(person) {
   const born = person.born || "YYYY";
   const died = person.died ? person.died : person.died === 0 ? "0" : "";
@@ -121,21 +99,6 @@ export function buildVisibleRows(root, collapsed, forceOpenIds) {
 
   walk(root, 0, null);
   return { order, rowMap, edges };
-}
-
-// Flat {parentId, childId, childGen} edge list for a plain recursive
-// node-link layout (no generation-row grouping) — used by the free-form
-// tree views. childGen lets renderers color connector lines by generation.
-export function collectEdges(root, collapsed, forceOpenIds, gen = 0, edges = []) {
-  const isOpen = forceOpenIds.has(root.id) || !collapsed.has(root.id);
-  const kids = root.children || [];
-  if (kids.length > 0 && isOpen) {
-    kids.forEach((child) => {
-      edges.push({ parentId: root.id, childId: child.id, childGen: gen + 1 });
-      collectEdges(child, collapsed, forceOpenIds, gen + 1, edges);
-    });
-  }
-  return edges;
 }
 
 export const GENERATION_LABELS = [
