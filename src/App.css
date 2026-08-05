@@ -1413,6 +1413,287 @@
   opacity: 0.85;
 }
 
+/* ---------- Grouped org chart, light theme (Option 5) ---------- */
+/* Modeled on the BALKANGraph-style reference: light page, couples wrapped
+   in a soft gray box only when they have children, blue name/date tags
+   under circular avatars. Deliberately fixed light colors, like the paper
+   and dark chart pages — this is a distinct branded style, not app UI. */
+
+.grp-page {
+  min-height: 100svh;
+  background: #ffffff;
+  padding: 80px 24px 90px;
+  position: relative;
+}
+
+.grp-back.grp-back {
+  background: #ffffff;
+  border-color: #d8dce3;
+  color: #4a5568;
+  box-shadow: 0 4px 14px -6px rgba(0, 0, 0, 0.15);
+}
+
+.grp-back.grp-back:hover {
+  color: #1c2733;
+  border-color: #a9b3c1;
+}
+
+.grp-search {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #d8dce3;
+  border-radius: 10px;
+  padding: 10px 16px;
+  width: 280px;
+  color: #9aa4b2;
+  box-shadow: 0 4px 14px -6px rgba(0, 0, 0, 0.15);
+}
+
+.grp-search input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 0.85rem;
+  color: #2d3748;
+}
+
+.grp-search input::placeholder {
+  color: #a0aec0;
+}
+
+.grp-scroll {
+  overflow: auto;
+  padding-bottom: 20px;
+}
+
+.grp-canvas {
+  position: relative;
+  width: max-content;
+  min-width: 100%;
+  padding: 70px 40px 60px;
+}
+
+.grp-edges {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: visible;
+}
+
+.grp-edges path {
+  fill: none;
+  stroke: #c7cdd6;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.grp-node {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+}
+
+.grp-children {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 36px;
+  max-width: min(1400px, 90vw);
+}
+
+.grp-box {
+  position: relative;
+  background: #f4f5f7;
+  border: 1px solid #e7e9ed;
+  border-radius: 16px;
+  padding: 26px 30px 20px;
+}
+
+.grp-pair {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.grp-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  width: 108px;
+  flex-shrink: 0;
+}
+
+.grp-card:hover .grp-card__tag {
+  filter: brightness(1.08);
+}
+
+.grp-card__avatar {
+  position: relative;
+  z-index: 2;
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  border: 3px solid #2f6fbf;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+  margin-bottom: -14px;
+  background: #8492a6;
+}
+
+.grp-card--u .grp-card__avatar {
+  border-color: #a0aec0;
+  background: #cbd5e0;
+}
+
+.grp-card__bio-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #38a169;
+  border: 2px solid #fff;
+  z-index: 3;
+}
+
+.grp-card__flag-dot {
+  position: absolute;
+  bottom: 12px;
+  right: -6px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #e0b45c;
+  border: 2px solid #fff;
+  color: #3a2c05;
+  font-size: 0.6rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+
+.grp-card__tag {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #3f7fc4;
+  color: #fff;
+  border-radius: 6px;
+  padding: 18px 8px 7px;
+  width: 100%;
+  box-shadow: 0 3px 8px -3px rgba(0, 0, 0, 0.35);
+}
+
+.grp-card--u .grp-card__tag {
+  background: #8492a6;
+}
+
+.grp-card__name {
+  font-size: 0.76rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.grp-card__years {
+  font-size: 0.64rem;
+  opacity: 0.85;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.grp-card.is-selected .grp-card__avatar {
+  box-shadow: 0 0 0 3px rgba(47, 111, 191, 0.35), 0 2px 6px rgba(0, 0, 0, 0.18);
+}
+
+.grp-card.is-match .grp-card__tag {
+  outline: 2px solid #38a169;
+  outline-offset: 1px;
+}
+
+.grp-card.is-dimmed {
+  opacity: 0.35;
+}
+
+.grp-marriage {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  margin-top: 18px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid #c7cdd6;
+  color: #8492a6;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.grp-marriage:hover {
+  border-color: #2f6fbf;
+  color: #2f6fbf;
+}
+
+.grp-marriage.is-collapsed {
+  border-style: dashed;
+}
+
+.grp-collapse {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: #fff;
+  border: 1px solid #d8dce3;
+  color: #8492a6;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.grp-collapse:hover {
+  border-color: #2f6fbf;
+  color: #2f6fbf;
+}
+
 /* ---------- Responsive ---------- */
 
 @media (max-width: 760px) {
@@ -1445,6 +1726,16 @@
   }
 
   .chart-page {
+    padding-top: 96px;
+  }
+
+  .grp-search {
+    width: auto;
+    left: 16px;
+    right: 16px;
+  }
+
+  .grp-page {
     padding-top: 96px;
   }
 }

@@ -13,6 +13,7 @@ export default function Header({
   onOpenOption2,
   onOpenOption3,
   onOpenOption4,
+  onOpenOption5,
 }) {
   return (
     <header className="app-header">
@@ -39,6 +40,11 @@ export default function Header({
             {onOpenOption4 && (
               <button type="button" className="option-link" onClick={onOpenOption4}>
                 View Option 4 — free-form tree →
+              </button>
+            )}
+            {onOpenOption5 && (
+              <button type="button" className="option-link" onClick={onOpenOption5}>
+                View Option 5 — grouped org chart →
               </button>
             )}
           </div>

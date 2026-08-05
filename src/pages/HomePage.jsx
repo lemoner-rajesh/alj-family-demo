@@ -6,7 +6,7 @@ import DetailDrawer from "../components/DetailDrawer";
 import { familyRoot, defaultCollapsedIds } from "../data/familyData";
 import { buildIndex, flattenPeople, searchOpenPath, getRelations, GENERATION_LABELS } from "../utils/familyUtils";
 
-export default function HomePage({ onOpenOption1, onOpenOption2, onOpenOption3, onOpenOption4 }) {
+export default function HomePage({ onOpenOption1, onOpenOption2, onOpenOption3, onOpenOption4, onOpenOption5 }) {
   const [view, setView] = useState("tree");
   const [query, setQuery] = useState("");
   const [collapsed, setCollapsed] = useState(() => new Set(defaultCollapsedIds));
@@ -76,6 +76,7 @@ export default function HomePage({ onOpenOption1, onOpenOption2, onOpenOption3, 
         onOpenOption2={onOpenOption2}
         onOpenOption3={onOpenOption3}
         onOpenOption4={onOpenOption4}
+        onOpenOption5={onOpenOption5}
       />
 
       <main className="app-main">

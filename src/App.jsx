@@ -4,6 +4,7 @@ import Option1Page from "./pages/Option1Page";
 import Option2Page from "./pages/Option2Page";
 import Option3Page from "./pages/Option3Page";
 import Option4Page from "./pages/Option4Page";
+import Option5Page from "./pages/Option5Page";
 
 export default function App() {
   const [path, navigate] = useRoute();
@@ -24,12 +25,17 @@ export default function App() {
     return <Option4Page onBack={() => navigate("/")} />;
   }
 
+  if (path === "/option-5") {
+    return <Option5Page onBack={() => navigate("/")} />;
+  }
+
   return (
     <HomePage
       onOpenOption1={() => navigate("/option-1")}
       onOpenOption2={() => navigate("/option-2")}
       onOpenOption3={() => navigate("/option-3")}
       onOpenOption4={() => navigate("/option-4")}
+      onOpenOption5={() => navigate("/option-5")}
     />
   );
 }
