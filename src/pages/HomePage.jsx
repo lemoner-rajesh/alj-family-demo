@@ -4,7 +4,14 @@ import TreeView from "../components/TreeView";
 import TimelineView from "../components/TimelineView";
 import DetailDrawer from "../components/DetailDrawer";
 import { familyRoot, defaultCollapsedIds } from "../data/familyData";
-import { buildIndex, flattenPeople, searchOpenPath, getRelations, GENERATION_LABELS } from "../utils/familyUtils";
+import {
+  buildIndex,
+  flattenPeople,
+  searchOpenPath,
+  getRelations,
+  GENERATION_LABELS,
+  MIN_COLLAPSIBLE_GEN,
+} from "../utils/familyUtils";
 
 export default function HomePage() {
   const [view, setView] = useState("tree");
@@ -30,15 +37,47 @@ export default function HomePage() {
     return new Set([...fromSearch, ...manualOpenIds]);
   }, [query, manualOpenIds]);
 
+  const generationGroups = useMemo(() => {
+    const byGen = new Map();
+    flat.forEach((entry) => {
+      if (entry.isSpouse || entry.generation < MIN_COLLAPSIBLE_GEN) return;
+      if (!(entry.person.children || []).length) return;
+      if (!byGen.has(entry.generation)) byGen.set(entry.generation, []);
+      byGen.get(entry.generation).push(entry.person.id);
+    });
+    // Each group's ids are the people whose children make up the NEXT
+    // generation, so a button collapses generation `gen + 1` into view —
+    // e.g. collapsing Origins hides Generation 1, so the button is labeled
+    // "Generation 1" rather than "Origins".
+    return [...byGen.entries()]
+      .sort(([a], [b]) => a - b)
+      .map(([gen, ids]) => ({
+        gen: gen + 1,
+        ids,
+        label: GENERATION_LABELS[gen + 1] || `Generation ${gen + 1}`,
+      }));
+  }, [flat]);
+
   const selectedPerson = selectedId ? index.get(selectedId)?.person : null;
   const selectedGeneration = selectedId ? index.get(selectedId)?.generation : null;
-  const relations = selectedPerson ? getRelations(index, selectedPerson) : { spouse: null, children: [] };
+  const relations = selectedPerson ? getRelations(index, selectedPerson) : { spouses: [], children: [] };
 
   const handleToggle = (id) => {
     setCollapsed((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
+      return next;
+    });
+  };
+
+  const handleToggleGeneration = (ids, anyExpanded) => {
+    setCollapsed((prev) => {
+      const next = new Set(prev);
+      ids.forEach((id) => {
+        if (anyExpanded) next.add(id);
+        else next.delete(id);
+      });
       return next;
     });
   };
@@ -71,6 +110,10 @@ export default function HomePage() {
         stats={stats}
         onExpandAll={handleExpandAll}
         onCollapseAll={handleCollapseAll}
+        generationGroups={generationGroups}
+        collapsed={collapsed}
+        forceOpenIds={forceOpenIds}
+        onToggleGeneration={handleToggleGeneration}
       />
 
       <main className="app-main">

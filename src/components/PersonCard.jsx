@@ -15,9 +15,11 @@ export default function PersonCard({ person, isSpouse, isSelected, isMatch, dimm
         .join(" ")}
       onClick={() => onSelect(person)}
     >
-      <span className="person-card__name">{person.name}</span>
-      <span className="person-card__years">{lifeSpan(person)}</span>
-      <span className="person-card__badges">{person.hasBio && <span className="badge badge--bio">View Bio</span>}</span>
+      <span className="person-card__body">
+        <span className="person-card__name">{person.name}</span>
+        <span className="person-card__years">{lifeSpan(person)}</span>
+        <span className="person-card__badges">{person.hasBio && <span className="badge badge--bio">View Bio</span>}</span>
+      </span>
     </button>
   );
 }

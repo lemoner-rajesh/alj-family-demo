@@ -6,9 +6,9 @@ export function flattenPeople(root, generation = 0, parentPath = []) {
   const path = [...parentPath, root.id];
   let list = [{ person: root, generation, isSpouse: false, path }];
 
-  if (root.spouse) {
-    list.push({ person: root.spouse, generation, isSpouse: true, path });
-  }
+  (root.spouses || []).forEach((spouse) => {
+    list.push({ person: spouse, generation, isSpouse: true, path });
+  });
 
   for (const child of root.children || []) {
     list = list.concat(flattenPeople(child, generation + 1, path));
@@ -35,19 +35,6 @@ export function matchesQuery(person, query) {
   );
 }
 
-const TITLE_WORDS = new Set(["eng.", "eng", "dr.", "dr", "sh.", "sh", "kbe", "jr", "jr."]);
-
-// Initials for the drawer avatar — skips honorifics/titles so "Eng.
-// Mohammed Jameel, KBE" reads as "MJ" rather than "EM".
-export function getInitials(name) {
-  const words = name
-    .replace(/[,.]/g, " ")
-    .split(/\s+/)
-    .filter((w) => w && !TITLE_WORDS.has(w.toLowerCase()) && /[a-zA-Z]/.test(w));
-  const letters = words.slice(0, 2).map((w) => w[0].toUpperCase());
-  return letters.join("") || name.slice(0, 2).toUpperCase();
-}
-
 export function lifeSpan(person) {
   const born = person.born || "YYYY";
   const died = person.died ? person.died : person.died === 0 ? "0" : "";
@@ -70,15 +57,15 @@ export function searchOpenPath(root, query) {
 
 export function getRelations(index, person) {
   const entry = index.get(person.id);
-  if (!entry) return { spouse: null, children: [] };
+  if (!entry) return { spouses: [], children: [] };
 
   if (entry.isSpouse) {
     const primaryId = entry.path[entry.path.length - 1];
     const primary = index.get(primaryId).person;
-    return { spouse: primary, children: primary.children || [] };
+    return { spouses: [primary], children: primary.children || [] };
   }
 
-  return { spouse: person.spouse || null, children: person.children || [] };
+  return { spouses: person.spouses || [], children: person.children || [] };
 }
 
 // Each row entry carries `isGroupStart` — true when it's the first of a

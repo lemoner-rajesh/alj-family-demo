@@ -29,10 +29,12 @@ export default function TreeView({ root, collapsed, onToggle, selectedId, onSele
 
         {order.map((gen) => {
           const people = rowMap.get(gen);
+          const label = GENERATION_LABELS[gen] || `Generation ${gen}`;
+
           return (
             <div className="gen-row" key={gen}>
               <div className={`gen-row__label ${genClass(gen)}`}>
-                <span className="gen-row__name">{GENERATION_LABELS[gen] || `Generation ${gen}`}</span>
+                <span className="gen-row__name">{label}</span>
               </div>
               <div className={`gen-row__cards ${genClass(gen)}`}>
                 {people.map(({ person, isGroupStart }) => (

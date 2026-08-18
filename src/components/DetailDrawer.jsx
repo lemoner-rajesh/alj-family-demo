@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { getInitials, genColorIndex, lifeSpan } from "../utils/familyUtils";
+import { genColorIndex, lifeSpan } from "../utils/familyUtils";
+import PersonPhoto from "./PersonPhoto";
 
 export default function DetailDrawer({ person, gen, generationLabel, relations, onClose, onJump }) {
   const [bioOpen, setBioOpen] = useState(false);
@@ -10,13 +11,15 @@ export default function DetailDrawer({ person, gen, generationLabel, relations, 
 
   return (
     <aside className="drawer" role="dialog" aria-label={`${person.name} details`}>
-      <div className={`drawer__header ${genClass}`}>
-        <button type="button" className="drawer__close" onClick={onClose} aria-label="Close">
-          ×
-        </button>
+      <div className={`drawer__photo ${genClass}`}>
+        <PersonPhoto person={person} />
+      </div>
 
-        <span className="drawer__avatar">{getInitials(person.name)}</span>
+      <button type="button" className="drawer__close" onClick={onClose} aria-label="Close">
+        ×
+      </button>
 
+      <div className="drawer__header">
         <span className="drawer__gen">{generationLabel}</span>
         <h2>{person.name}</h2>
         {person.fullName && <p className="drawer__fullname">{person.fullName}</p>}
@@ -89,13 +92,19 @@ export default function DetailDrawer({ person, gen, generationLabel, relations, 
           </div>
         )}
 
-        {relations.spouse && (
+        {relations.spouses && relations.spouses.length > 0 && (
           <div className="drawer__section">
-            <h3>Spouse</h3>
-            <button type="button" className="relation-link" onClick={() => onJump(relations.spouse)}>
-              <span>{relations.spouse.name}</span>
-              <span className="relation-link__arrow">→</span>
-            </button>
+            <h3>{relations.spouses.length > 1 ? `Spouses (${relations.spouses.length})` : "Spouse"}</h3>
+            <ul className="relation-list">
+              {relations.spouses.map((s) => (
+                <li key={s.id}>
+                  <button type="button" className="relation-link" onClick={() => onJump(s)}>
+                    <span>{s.name}</span>
+                    <span className="relation-link__arrow">→</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
           </div>
         )}
 

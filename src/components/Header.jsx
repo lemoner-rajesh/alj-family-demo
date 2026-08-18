@@ -1,7 +1,20 @@
 import SearchBar from "./SearchBar";
 import Legend from "./Legend";
+import { genColorIndex } from "../utils/familyUtils";
 
-export default function Header({ view, onViewChange, query, onQueryChange, stats, onExpandAll, onCollapseAll }) {
+export default function Header({
+  view,
+  onViewChange,
+  query,
+  onQueryChange,
+  stats,
+  onExpandAll,
+  onCollapseAll,
+  generationGroups,
+  collapsed,
+  forceOpenIds,
+  onToggleGeneration,
+}) {
   const hint =
     view === "tree" ? "Click a card for details · click ⊕ to open a branch" : "Click a card for details";
 
@@ -60,6 +73,27 @@ export default function Header({ view, onViewChange, query, onQueryChange, stats
             <button type="button" onClick={onCollapseAll}>
               Collapse all
             </button>
+          </div>
+        )}
+
+        {view === "tree" && generationGroups.length > 0 && (
+          <div className="gen-controls">
+            {generationGroups.map(({ gen, ids, label }) => {
+              const anyExpanded = ids.some((id) => forceOpenIds.has(id) || !collapsed.has(id));
+              return (
+                <button
+                  key={gen}
+                  type="button"
+                  className={`gen-controls__btn gen-${genColorIndex(gen)}`}
+                  onClick={() => onToggleGeneration(ids, anyExpanded)}
+                  aria-label={anyExpanded ? `Collapse all of ${label}` : `Expand all of ${label}`}
+                  title={anyExpanded ? `Collapse all of ${label}` : `Expand all of ${label}`}
+                >
+                  <span className="gen-controls__icon">{anyExpanded ? "−" : "+"}</span>
+                  {label}
+                </button>
+              );
+            })}
           </div>
         )}
       </div>

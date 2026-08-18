@@ -1,5 +1,6 @@
 // Mock data for the family tree demo — modeled on "The Jameel Family" draft chart.
-// Structure: each person may have a `spouse` and a `children` array.
+// Structure: each person may have a `spouses` array (usually one, but a
+// remarriage means more than one) and a `children` array.
 // `generation` mirrors the "Family Business Generation N" bands in the source chart.
 
 let uid = 0;
@@ -16,7 +17,12 @@ const person = (data) => ({
   note: null,
   businesses: [],
   children: [],
-  spouse: null,
+  spouses: [],
+  // No real photos of real family members are set here (none available for
+  // this mock dataset) — cards fall back to a placeholder silhouette. If a
+  // real photo becomes available, just set a URL here and the card picks it
+  // up automatically.
+  photoUrl: null,
   ...data,
 });
 
@@ -78,7 +84,7 @@ const abir = person({
   born: 1966,
   gender: "f",
   children: abirsKids,
-  spouse: person({ name: "Salah Abdulaziz Tawfeek", born: 1966, gender: "m" }),
+  spouses: [person({ name: "Salah Abdulaziz Tawfeek", born: 1966, gender: "m" })],
 });
 
 const ghadah = person({
@@ -87,7 +93,7 @@ const ghadah = person({
   born: 1967,
   gender: "f",
   children: ghadahsKids,
-  spouse: person({ name: "Yasser Farouk Eladawy", gender: "m" }),
+  spouses: [person({ name: "Yasser Farouk Eladawy", gender: "m" })],
 });
 
 const ihab = person({
@@ -98,7 +104,7 @@ const ihab = person({
   hasBio: true,
   businesses: ["alj.com", "communityjameel.org", "artjameel.org"],
   children: ihabsKids,
-  spouse: person({ name: "Laila Halawani", fullName: "Laila Ahmed M Halawani", born: 1970, gender: "f" }),
+  spouses: [person({ name: "Laila Halawani", fullName: "Laila Ahmed M Halawani", born: 1970, gender: "f" })],
 });
 
 const faisal = person({
@@ -109,7 +115,7 @@ const faisal = person({
   hasBio: true,
   businesses: ["alj-enterprises.com"],
   children: faisalsKids,
-  spouse: person({ name: "Sara Mufti", fullName: "Sara Sami Mufti", born: 1979, gender: "f" }),
+  spouses: [person({ name: "Sara Mufti", fullName: "Sara Sami Mufti", born: 1979, gender: "f" })],
 });
 
 const hisham = person({
@@ -138,7 +144,7 @@ const saraFawaz = person({
   born: 1985,
   gender: "f",
   children: sarasKids,
-  spouse: person({ name: "Rowaid Al Sawaf", gender: "m", hasBio: true }),
+  spouses: [person({ name: "Rowaid Al Sawaf", gender: "m", hasBio: true })],
 });
 
 const hassan = person({
@@ -165,7 +171,7 @@ const fady = person({
   hasBio: true,
   businesses: ["alj.com", "communityjameel.org", "artjameel.org"],
   children: fadysKids,
-  spouse: person({ name: "Jihan Zahid", fullName: "Jihan Mohamed Y. Zahid", born: 1985, gender: "f" }),
+  spouses: [person({ name: "Jihan Zahid", fullName: "Jihan Mohamed Y. Zahid", born: 1985, gender: "f" })],
 });
 
 const mysterySister = person({
@@ -174,13 +180,15 @@ const mysterySister = person({
   unverified: true,
   note: "Marked \"[SISTER?]\" on the source chart — identity unconfirmed.",
   businesses: ["haljgroup.com", "hadya.com"],
-  spouse: person({
-    name: "[NAME] Al Haddad",
-    gender: "m",
-    unverified: true,
-    note: "Recorded only as \"[NAME] Al Haddad\" on the source chart, directly beneath this entry — the marriage itself is not explicitly confirmed.",
-    relatedMentions: [{ name: "Osama Saad Al Haddad" }, { name: "Khalid Al-Haddad" }],
-  }),
+  spouses: [
+    person({
+      name: "[NAME] Al Haddad",
+      gender: "m",
+      unverified: true,
+      note: "Recorded only as \"[NAME] Al Haddad\" on the source chart, directly beneath this entry — the marriage itself is not explicitly confirmed.",
+      relatedMentions: [{ name: "Osama Saad Al Haddad" }, { name: "Khalid Al-Haddad" }],
+    }),
+  ],
 });
 
 // ---- Generation 2 (children of Abdullatif & Nafisa) ----
@@ -190,13 +198,6 @@ const hadia = person({
   fullName: "Hadia Abdullatif Jameel",
   born: 1941,
   gender: "f",
-  children: [abir, ghadah, ihab, faisal],
-  spouse: person({
-    name: "Saif Al-Din Al Samannoudi",
-    fullName: "Saif Al-Din bin Abdul Hamid Al Samannoudi",
-    born: 1924,
-    gender: "m",
-  }),
 });
 
 const nagia = person({
@@ -206,12 +207,14 @@ const nagia = person({
   gender: "f",
   businesses: ["aljhospital.com", "dataocean.com", "najtech.com.sa"],
   children: [hisham, aladin, majed],
-  spouse: person({
-    name: "[NAME] Hamza",
-    gender: "m",
-    unverified: true,
-    note: "Recorded only as \"[NAME] Hamza\" on the source chart.",
-  }),
+  spouses: [
+    person({
+      name: "[NAME] Hamza",
+      gender: "m",
+      unverified: true,
+      note: "Recorded only as \"[NAME] Hamza\" on the source chart.",
+    }),
+  ],
 });
 
 const hayat = person({
@@ -219,8 +222,18 @@ const hayat = person({
   fullName: "Hayat Abdullatif Jameel",
   born: 1943,
   gender: "f",
-  children: [saraFawaz],
-  spouse: person({ name: "Marwan Al Fawaz", fullName: "Marwan Abdualrazaq Al Fawaz", born: 1953, gender: "m" }),
+  // Married twice per the source chart: Saif Al-Din Al Samannoudi first,
+  // then Marwan Al Fawaz — both marriages' children are hers.
+  children: [abir, ghadah, ihab, faisal, saraFawaz],
+  spouses: [
+    person({
+      name: "Saif Al-Din Al Samannoudi",
+      fullName: "Saif Al-Din bin Abdul Hamid Al Samannoudi",
+      born: 1924,
+      gender: "m",
+    }),
+    person({ name: "Marwan Al Fawaz", fullName: "Marwan Abdualrazaq Al Fawaz", born: 1953, gender: "m" }),
+  ],
 });
 
 const yousuf = person({
@@ -240,13 +253,15 @@ const mohammedKbe = person({
   hasBio: true,
   businesses: ["alj.com", "communityjameel.org", "communityjameelsaudi.org", "artjameel.org", "bcj.com.sa"],
   children: [hassan, husseinJr, fady, mysterySister],
-  spouse: person({
-    name: "[NAME]",
-    gender: "f",
-    unverified: true,
-    note: "Recorded only as \"[NAME]\" on the source chart.",
-    relatedMentions: [{ name: "Khudr Hussein" }, { name: "Yousef Hussein", hasBio: true }],
-  }),
+  spouses: [
+    person({
+      name: "[NAME]",
+      gender: "f",
+      unverified: true,
+      note: "Recorded only as \"[NAME]\" on the source chart.",
+      relatedMentions: [{ name: "Khudr Hussein" }, { name: "Yousef Hussein", hasBio: true }],
+    }),
+  ],
 });
 
 const majdi = person({
@@ -273,13 +288,15 @@ export const abdullatif = person({
     "Ahmed Al-Kaf",
   ],
   children: [hadia, nagia, hayat, yousuf, mohammedKbe, majdi],
-  spouse: person({
-    name: "Nafisa Shams",
-    fullName: "Nafisa Mahmoud Mohammed Shams",
-    died: 1981,
-    gender: "f",
-    businesses: ["nafisashams.com"],
-  }),
+  spouses: [
+    person({
+      name: "Nafisa Shams",
+      fullName: "Nafisa Mahmoud Mohammed Shams",
+      died: 1981,
+      gender: "f",
+      businesses: ["nafisashams.com"],
+    }),
+  ],
 });
 
 const abdulaziz = person({
@@ -313,13 +330,15 @@ const husseinJameelSr = person({
   unverified: true,
   note: "Recorded only as \"(FULL NAME?)\" with no dates on the source chart.",
   children: [unnamedBrother, abdulaziz, abdullatif],
-  spouse: person({
-    name: "Maryam Zuhairi",
-    died: 1957,
-    gender: "f",
-    unverified: true,
-    note: "Full name marked \"(FULL NAME?)\" on the source chart — only her death year is recorded.",
-  }),
+  spouses: [
+    person({
+      name: "Maryam Zuhairi",
+      died: 1957,
+      gender: "f",
+      unverified: true,
+      note: "Full name marked \"(FULL NAME?)\" on the source chart — only her death year is recorded.",
+    }),
+  ],
 });
 
 export const familyRoot = person({
