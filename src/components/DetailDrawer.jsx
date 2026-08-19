@@ -45,8 +45,12 @@ export default function DetailDrawer({ person, gen, generationLabel, relations, 
             </button>
             {bioOpen && (
               <p className="drawer__bio-text">
-                Full biography content for {person.name} would be loaded here in the production
-                application — this prototype uses placeholder text to demonstrate the interaction.
+                {person.bio || (
+                  <>
+                    Full biography content for {person.name} would be loaded here in the production
+                    application — this prototype uses placeholder text to demonstrate the interaction.
+                  </>
+                )}
               </p>
             )}
           </div>

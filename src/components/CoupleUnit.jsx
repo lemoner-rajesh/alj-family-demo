@@ -57,9 +57,15 @@ export default function CoupleUnit({ person, selectedId, onSelect, query, onTogg
 
   return (
     <div className={`couple-unit ${groupStart ? "couple-unit--group-start" : ""}`}>
-      {/* Only the marriage pair is measured for connector lines — the expand
-          toggle must stay outside it, or the anchor point skews toward it. */}
-      <div className="couple-unit__pair" ref={(el) => registerNode(person.id, el)}>
+      {/* Two different anchors, deliberately. `${person.id}:source` marks
+          the whole pair (primary + spouse cards + "M" toggles) — every card
+          is the same fixed width, so for the common one-spouse case its
+          center lands right on the "M" glyph, matching the source chart's
+          branch-drops-from-the-marriage convention. Plain `person.id` marks
+          only the primary's own card, used when this person is someone
+          ELSE's child — an incoming line from their own parent must land on
+          their card, not drift onto their marriage with their own spouse. */}
+      <div className="couple-unit__pair" ref={(el) => registerNode(`${person.id}:source`, el)}>
         {beforeState && (
           <Fragment key={beforeState.spouse.id}>
             {beforeState.showSpouse && spouseCard(beforeState)}
@@ -73,6 +79,7 @@ export default function CoupleUnit({ person, selectedId, onSelect, query, onTogg
           isMatch={searching && matchesQuery(person, query)}
           dimmed={searching && !selfMatch}
           onSelect={onSelect}
+          cardRef={(el) => registerNode(person.id, el)}
         />
 
         {afterStates.map((state) => (

@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project
 
 Interactive family tree prototype for "The Jameel Family" — a React + Vite demo, no backend. All data is
-mock/local in `src/data/familyData.js`, modeled on a source PDF chart. The app is a single page
+mock/local in `src/data/familyData.json`, modeled on a source PDF chart. The app is a single page
 (`HomePage.jsx`) with a Tree view and a Timeline view, search, and a detail drawer.
 
 ## Commands
@@ -34,10 +34,21 @@ by them — was deliberately removed at the user's request. Some of the *shared*
 single-page app strictly needs — that's residue from supporting multiple renderers, not accidental
 complexity. Don't reintroduce multi-page routing unless explicitly asked.
 
-### Data model (`src/data/familyData.js`)
-- The tree is built from nested `person()` factory objects: `id, name, fullName, born, died, gender,
-  hasBio, unverified, note, businesses[], children[], spouses[]`.
-- `spouses` is an array of `person()` objects (almost always length 1) — a married couple is one primary
+### Data model (`src/data/familyData.json` + `src/data/familyData.js`)
+- `familyData.json` is the single source of truth — a fully-nested tree of person records, each with the
+  complete field set explicit on every node (no JS factory defaults to fall back on): `id, name, fullName,
+  born, died, gender, hasBio, bio, unverified, note, businesses[], mentionedInBio[], relatedMentions[],
+  photoUrl, defaultCollapsed, spouses[], children[]`. `id` is a stable name-derived slug (e.g.
+  `"hayat-jameel"`), disambiguated with a `-2`/`-3` suffix on collision (two people are both named "Hussein
+  Jameel": `hussein-jameel` and `hussein-jameel-2`).
+- `familyData.js` is a thin loader — `familyRoot` is just the parsed JSON, and `defaultCollapsedIds` is
+  derived at import time by walking the tree for `defaultCollapsed: true` flags. Swapping in a real
+  API/CMS later means replacing this loader (e.g. `fetch()` + the same shape), not the JSON shape or any
+  consuming component.
+- `bio` is `null` for every person right now (no real biography text exists yet) — `DetailDrawer`'s "View
+  biography" panel shows `person.bio` when set, else falls back to prototype placeholder text. Populating
+  `bio` per person is enough to make it real; no component change needed.
+- `spouses` is an array of person objects (almost always length 1) — a married couple is one primary
   person plus entries in `.spouses`, not two peers in `children`. A remarriage (e.g. Hayat Jameel, married
   to both Saif Al-Din Al Samannoudi and Marwan Al Fawaz per the source chart) is just a second entry in
   the array — all children from every marriage stay flat in the primary person's own `children[]` rather
@@ -65,9 +76,34 @@ complexity. Don't reintroduce multi-page routing unless explicitly asked.
   `scrollWidth`/`scrollHeight` — using scroll size caused a real bug where the absolutely-positioned SVG
   overlay's own stale size fed back into the measurement, so the canvas could never shrink back down after
   collapsing a large branch. Don't revert that.
-- `CoupleUnit.jsx` renders one couple. The ref used for line-anchoring wraps *only* the primary+spouse
-  pair — never the expand/collapse toggle. An earlier bug had the toggle inside the measured box, which
-  skewed the connector line's anchor point sideways toward the spouse.
+- Every person registers **two** nodes in `CoupleUnit.jsx`, not one — this distinction matters and was the
+  source of two separate bugs when collapsed into a single node. `${person.id}:source` marks the whole
+  `.couple-unit__pair` (primary + spouse card(s) + "M" toggle(s) together); plain `person.id` marks only the
+  primary's own `PersonCard` (passed down as a `cardRef` prop it forwards to its root `<button>`).
+  `useMeasuredEdges` looks up `${edge.parentId}:source` for where a branch *departs* and plain
+  `edge.childId` for where it *arrives*:
+  - **Departure** (`:source`, the whole pair) is deliberate: the source chart draws the branch to children
+    dropping from the marriage connector, not from either spouse individually. Every `PersonCard` is the
+    same fixed width, so for the common one-spouse case the pair's geometric center lands right on the "M"
+    glyph between the two cards — matching the chart with no special-casing needed. It degrades sensibly at
+    the edges too: a spouse-less primary's "pair" is just their own card, so the departure point is their
+    card center; a remarriage (`CoupleUnit` puts the first spouse before the primary and the rest after, so
+    the primary stays visually centered — see below) has no single marriage to point to, so it falls back to
+    the primary's own center by the same symmetric-width math.
+  - **Arrival** (plain id, primary's card only) must stay separate from departure: an incoming line from
+    THIS person's own parent has to land on their card specifically, not drift onto their marriage with
+    their own spouse. Reusing one shared node for both directions was tried and is wrong — it makes a
+    person's own children branch correctly from their marriage, but also makes the line arriving from THEIR
+    parent land on that same marriage point instead of on them.
+  - The expand/collapse toggle stays a sibling *outside* the ref'd `.couple-unit__pair` row (an earlier bug
+    had it inside the measured box, which skewed the departure point sideways) — CSS alone
+    (`align-items: center` on `.couple-unit`) keeps the toggle visually centered under the same row the
+    `:source` ref measures, so the toggle and the line it controls always agree on where the branch starts.
+- A remarriage (2+ entries in `spouses[]`, e.g. Hayat Jameel) renders with the *first* spouse to the
+  primary's left and the rest to their right, rather than stacking every spouse on one side — that's what
+  keeps the primary horizontally centered in the pair (see `CoupleUnit.jsx`'s `beforeState`/`afterStates`
+  split), which in turn is what keeps the departure point centered on the primary rather than skewed toward
+  one marriage.
 - `MIN_COLLAPSIBLE_GEN` (`familyUtils.js`, currently `1`) hides the expand/collapse toggle at shallower
   depths than that. Collapsing the lone-child Founder row hides ~the entire tree in one click and reads as
   the app breaking; Origins (depth 1) onward do show the toggle since collapsing them is actually useful.

@@ -1,9 +1,10 @@
 import { lifeSpan } from "../utils/familyUtils";
 
-export default function PersonCard({ person, isSpouse, isSelected, isMatch, dimmed, onSelect }) {
+export default function PersonCard({ person, isSpouse, isSelected, isMatch, dimmed, onSelect, cardRef }) {
   return (
     <button
       type="button"
+      ref={cardRef}
       className={[
         "person-card",
         isSpouse ? "person-card--spouse" : "",

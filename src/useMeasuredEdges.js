@@ -22,7 +22,13 @@ export function useMeasuredEdges(edges, buildPath) {
     const paths = [];
 
     edges.forEach((edge) => {
-      const pEl = nodeRefs.current.get(edge.parentId);
+      // A person registers two nodes: their plain id (their own card only —
+      // where lines from THEIR parent arrive) and `${id}:source` (their
+      // whole marriage pair — where the branch to THEIR OWN children
+      // departs from). Using the same node for both would mean an incoming
+      // line lands on this person's marriage with their own spouse instead
+      // of their own card.
+      const pEl = nodeRefs.current.get(`${edge.parentId}:source`);
       const cEl = nodeRefs.current.get(edge.childId);
       if (!pEl || !cEl) return;
 
