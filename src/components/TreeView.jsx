@@ -45,7 +45,8 @@ export default function TreeView({ root, collapsed, onToggle, selectedId, onSele
                     onSelect={onSelect}
                     query={query}
                     onToggle={onToggle}
-                    isOpen={forceOpenIds.has(person.id) || !collapsed.has(person.id)}
+                    collapsed={collapsed}
+                    forceOpenIds={forceOpenIds}
                     registerNode={registerNode}
                     groupStart={isGroupStart}
                     gen={gen}

@@ -9,6 +9,7 @@ import {
   flattenPeople,
   searchOpenPath,
   getRelations,
+  groupChildrenBySpouse,
   GENERATION_LABELS,
   MIN_COLLAPSIBLE_GEN,
 } from "../utils/familyUtils";
@@ -41,9 +42,10 @@ export default function HomePage() {
     const byGen = new Map();
     flat.forEach((entry) => {
       if (entry.isSpouse || entry.generation < MIN_COLLAPSIBLE_GEN) return;
-      if (!(entry.person.children || []).length) return;
+      const groups = groupChildrenBySpouse(entry.person).filter((g) => g.children.length > 0);
+      if (groups.length === 0) return;
       if (!byGen.has(entry.generation)) byGen.set(entry.generation, []);
-      byGen.get(entry.generation).push(entry.person.id);
+      groups.forEach((g) => byGen.get(entry.generation).push(g.key));
     });
     // Each group's ids are the people whose children make up the NEXT
     // generation, so a button collapses generation `gen + 1` into view —
@@ -85,10 +87,14 @@ export default function HomePage() {
   const handleExpandAll = () => setCollapsed(new Set());
 
   const handleCollapseAll = () => {
-    const withChildren = flat
-      .filter((e) => !e.isSpouse && (e.person.children || []).length > 0)
-      .map((e) => e.person.id);
-    setCollapsed(new Set(withChildren));
+    const allGroupKeys = [];
+    flat.forEach((e) => {
+      if (e.isSpouse || e.generation < MIN_COLLAPSIBLE_GEN) return;
+      groupChildrenBySpouse(e.person).forEach((g) => {
+        if (g.children.length > 0) allGroupKeys.push(g.key);
+      });
+    });
+    setCollapsed(new Set(allGroupKeys));
   };
 
   const handleSelect = (person) => setSelectedId(person.id);

@@ -536,6 +536,19 @@
   opacity: 0.6;
 }
 
+/* Wraps a single "M" toggle so a per-marriage descendant toggle (a
+   remarriage only, e.g. Hayat Jameel) can hang directly below it — stretched
+   to the row's full height so it can be positioned off its own bottom edge,
+   without affecting the row's height/alignment the way an inline sibling
+   button would. */
+.couple-unit__marriage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+}
+
 .toggle-btn {
   position: relative;
   z-index: 2;
@@ -559,6 +572,14 @@
 .toggle-btn:hover {
   background: #33473f;
   box-shadow: 0 3px 8px rgba(68, 95, 92, 0.5);
+}
+
+.toggle-btn--marriage {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  margin-top: 0;
+  transform: translate(-50%, 50%);
 }
 
 /* ---------- Timeline view ---------- */
@@ -761,12 +782,6 @@
   margin-top: 4px;
 }
 
-.drawer__badges {
-  display: flex;
-  gap: 6px;
-  margin-top: 12px;
-}
-
 .drawer__body {
   padding: 22px 24px 40px;
 }
@@ -801,16 +816,6 @@
   margin-bottom: 8px;
 }
 
-.drawer__bio-toggle {
-  border: 1px solid var(--bio);
-  border-radius: var(--radius);
-  color: var(--bio);
-  background: var(--bio-bg);
-  padding: 7px 14px;
-  font-size: 0.82rem;
-  cursor: pointer;
-}
-
 .drawer__bio-text {
   margin-top: 10px;
   font-size: 0.85rem;
@@ -824,13 +829,14 @@
   flex-wrap: wrap;
 }
 
-.chip {
-  font-size: 0.74rem;
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 4px 10px;
-  color: var(--text-muted);
+.chip-link {
+  font-size: 0.82rem;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.chip-link:hover {
+  text-decoration: underline;
 }
 
 .drawer__hint {

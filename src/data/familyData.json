@@ -364,6 +364,7 @@
                   "bio": null,
                   "unverified": false,
                   "note": null,
+                  "parentSpouseId": "saif-al-din-al-samannoudi",
                   "businesses": [],
                   "mentionedInBio": [],
                   "relatedMentions": [],
@@ -461,6 +462,7 @@
                   "bio": null,
                   "unverified": false,
                   "note": null,
+                  "parentSpouseId": "saif-al-din-al-samannoudi",
                   "businesses": [],
                   "mentionedInBio": [],
                   "relatedMentions": [],
@@ -577,6 +579,7 @@
                   "bio": null,
                   "unverified": false,
                   "note": null,
+                  "parentSpouseId": "saif-al-din-al-samannoudi",
                   "businesses": [
                     "alj.com",
                     "communityjameel.org",
@@ -697,6 +700,7 @@
                   "bio": null,
                   "unverified": false,
                   "note": null,
+                  "parentSpouseId": "saif-al-din-al-samannoudi",
                   "businesses": [
                     "alj-enterprises.com"
                   ],
@@ -872,6 +876,7 @@
                   "bio": null,
                   "unverified": false,
                   "note": null,
+                  "parentSpouseId": "marwan-al-fawaz",
                   "businesses": [],
                   "mentionedInBio": [],
                   "relatedMentions": [],

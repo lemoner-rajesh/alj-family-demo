@@ -22,13 +22,19 @@ export function useMeasuredEdges(edges, buildPath) {
     const paths = [];
 
     edges.forEach((edge) => {
-      // A person registers two nodes: their plain id (their own card only —
-      // where lines from THEIR parent arrive) and `${id}:source` (their
-      // whole marriage pair — where the branch to THEIR OWN children
-      // departs from). Using the same node for both would mean an incoming
-      // line lands on this person's marriage with their own spouse instead
-      // of their own card.
-      const pEl = nodeRefs.current.get(`${edge.parentId}:source`);
+      // A person registers a node per marriage — `${id}:source` for the
+      // whole pair (the common single/no-spouse case) plus
+      // `${id}:source:${spouseId}` for each specific marriage toggle when
+      // they have 2+ spouses. A child tagged with `parentSpouseId` (e.g. one
+      // of Hayat Jameel's kids) departs from THAT marriage specifically,
+      // not from a generic point that's ambiguous between her two
+      // husbands. Falls back to the whole-pair node if no specific
+      // marriage anchor is registered. Their own plain id (no suffix) is
+      // reserved for the opposite direction — where lines from THEIR OWN
+      // parent arrive — so it always lands on their card, not their
+      // marriage.
+      const pKey = edge.spouseId ? `${edge.parentId}:source:${edge.spouseId}` : `${edge.parentId}:source`;
+      const pEl = nodeRefs.current.get(pKey) || nodeRefs.current.get(`${edge.parentId}:source`);
       const cEl = nodeRefs.current.get(edge.childId);
       if (!pEl || !cEl) return;
 

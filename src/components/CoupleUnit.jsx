@@ -1,11 +1,10 @@
 import { Fragment, useState } from "react";
 import PersonCard from "./PersonCard";
-import { matchesQuery, MIN_COLLAPSIBLE_GEN } from "../utils/familyUtils";
+import { matchesQuery, groupChildrenBySpouse, MIN_COLLAPSIBLE_GEN } from "../utils/familyUtils";
 
-export default function CoupleUnit({ person, selectedId, onSelect, query, onToggle, isOpen, registerNode, groupStart, gen }) {
+export default function CoupleUnit({ person, selectedId, onSelect, query, onToggle, collapsed, forceOpenIds, registerNode, groupStart, gen }) {
   const spouses = person.spouses || [];
   const [openSpouseIds, setOpenSpouseIds] = useState(() => new Set(spouses.map((s) => s.id)));
-  const showToggle = (person.children || []).length > 0 && gen >= MIN_COLLAPSIBLE_GEN;
   const searching = query.trim().length > 0;
   const selfMatch = matchesQuery(person, query) || spouses.some((s) => matchesQuery(s, query));
 
@@ -32,17 +31,71 @@ export default function CoupleUnit({ person, selectedId, onSelect, query, onTogg
   const beforeState = spouseStates.length > 1 ? spouseStates[0] : null;
   const afterStates = spouseStates.length > 1 ? spouseStates.slice(1) : spouseStates;
 
-  const spouseButton = ({ spouse, showSpouse }) => (
-    <button
-      type="button"
-      className={`marriage-toggle ${showSpouse ? "is-open" : "is-collapsed"}`}
-      onClick={() => toggleSpouse(spouse.id)}
-      aria-label={showSpouse ? "Hide spouse" : "Show spouse"}
-      title={showSpouse ? "Hide spouse" : `Show spouse: ${spouse.name}`}
-    >
-      M
-    </button>
-  );
+  // A remarriage tags each child with `parentSpouseId` (which marriage they
+  // came from) — see groupChildrenBySpouse. That splits the expand/collapse
+  // toggle too: each marriage gets its OWN toggle at its OWN departure
+  // point, so "collapse Saif's 4 kids" and "collapse Marwan's 1 kid" are
+  // independent instead of one shared toggle that can't tell the two
+  // marriages apart. Someone with 0 or 1 spouse (almost everyone) always
+  // produces exactly one untagged group, rendered as the single centered
+  // toggle exactly as before.
+  const canToggle = gen >= MIN_COLLAPSIBLE_GEN;
+  const groups = canToggle ? groupChildrenBySpouse(person).filter((g) => g.children.length > 0) : [];
+  const defaultGroup = groups.find((g) => g.spouseId === null);
+  const groupBySpouseId = new Map(groups.filter((g) => g.spouseId !== null).map((g) => [g.spouseId, g]));
+
+  const isGroupOpen = (group) => forceOpenIds.has(group.key) || !collapsed.has(group.key);
+
+  const renderToggle = (group, extraClass = "") => {
+    const open = isGroupOpen(group);
+    return (
+      <button
+        type="button"
+        className={`toggle-btn ${extraClass}`}
+        onClick={() => onToggle(group.key)}
+        aria-label={open ? "Collapse descendants" : "Expand descendants"}
+        title={open ? "Collapse this branch" : `Show ${group.children.length} ${group.children.length === 1 ? "child" : "children"}`}
+      >
+        {open ? "−" : `+${group.children.length}`}
+      </button>
+    );
+  };
+
+  // Registered as `${person.id}:source:${spouse.id}` — a dedicated departure
+  // point for THIS specific marriage, separate from the whole-pair
+  // `${person.id}:source` node. Only matters when a child is tagged with
+  // `parentSpouseId` (a remarriage, e.g. Hayat Jameel): without it, all of a
+  // remarried person's children would depart from one ambiguous point
+  // instead of branching from the marriage they actually came from.
+  //
+  // The ref goes on the `.couple-unit__marriage` WRAPPER, not the small "M"
+  // button itself — the wrapper is stretched (`align-self: stretch`) to the
+  // full row height, so its bottom edge lands at the same reference point
+  // the row's own bottom edge does. That's the same reference the *default*
+  // toggle's line uses (the whole pair's bottom), and it's what the
+  // per-marriage toggle button is positioned against too (`bottom: 0` on
+  // `.toggle-btn--marriage`). Anchoring on the "M" button's own tiny,
+  // vertically-centered box instead left the line ending well above the
+  // toggle circle instead of touching it — a visible gap the single-marriage
+  // case never had, since there the toggle already shares the pair's own
+  // bottom edge as its reference.
+  const spouseButton = ({ spouse, showSpouse }) => {
+    const group = groupBySpouseId.get(spouse.id);
+    return (
+      <span className="couple-unit__marriage" ref={(el) => registerNode(`${person.id}:source:${spouse.id}`, el)}>
+        <button
+          type="button"
+          className={`marriage-toggle ${showSpouse ? "is-open" : "is-collapsed"}`}
+          onClick={() => toggleSpouse(spouse.id)}
+          aria-label={showSpouse ? "Hide spouse" : "Show spouse"}
+          title={showSpouse ? "Hide spouse" : `Show spouse: ${spouse.name}`}
+        >
+          M
+        </button>
+        {group && renderToggle(group, "toggle-btn--marriage")}
+      </span>
+    );
+  };
 
   const spouseCard = ({ spouse, spouseMatches }) => (
     <PersonCard
@@ -90,17 +143,7 @@ export default function CoupleUnit({ person, selectedId, onSelect, query, onTogg
         ))}
       </div>
 
-      {showToggle && (
-        <button
-          type="button"
-          className="toggle-btn"
-          onClick={() => onToggle(person.id)}
-          aria-label={isOpen ? "Collapse descendants" : "Expand descendants"}
-          title={isOpen ? "Collapse this branch" : `Show ${person.children.length} ${person.children.length === 1 ? "child" : "children"}`}
-        >
-          {isOpen ? "−" : `+${person.children.length}`}
-        </button>
-      )}
+      {defaultGroup && renderToggle(defaultGroup)}
     </div>
   );
 }

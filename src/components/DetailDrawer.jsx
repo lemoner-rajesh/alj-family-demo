@@ -1,10 +1,7 @@
-import { useState } from "react";
 import { genColorIndex, lifeSpan } from "../utils/familyUtils";
 import PersonPhoto from "./PersonPhoto";
 
 export default function DetailDrawer({ person, gen, generationLabel, relations, onClose, onJump }) {
-  const [bioOpen, setBioOpen] = useState(false);
-
   if (!person) return null;
 
   const genClass = `gen-${genColorIndex(gen)}`;
@@ -24,11 +21,6 @@ export default function DetailDrawer({ person, gen, generationLabel, relations, 
         <h2>{person.name}</h2>
         {person.fullName && <p className="drawer__fullname">{person.fullName}</p>}
         <p className="drawer__years">{lifeSpan(person)}</p>
-        {person.hasBio && (
-          <div className="drawer__badges">
-            <span className="badge badge--bio">View Bio</span>
-          </div>
-        )}
       </div>
 
       <div className="drawer__body">
@@ -40,19 +32,15 @@ export default function DetailDrawer({ person, gen, generationLabel, relations, 
 
         {person.hasBio && (
           <div className="drawer__section">
-            <button type="button" className="drawer__bio-toggle" onClick={() => setBioOpen((v) => !v)}>
-              {bioOpen ? "Hide biography" : "View biography"}
-            </button>
-            {bioOpen && (
-              <p className="drawer__bio-text">
-                {person.bio || (
-                  <>
-                    Full biography content for {person.name} would be loaded here in the production
-                    application — this prototype uses placeholder text to demonstrate the interaction.
-                  </>
-                )}
-              </p>
-            )}
+            <h3>Biography</h3>
+            <p className="drawer__bio-text">
+              {person.bio || (
+                <>
+                  Full biography content for {person.name} would be loaded here in the production
+                  application — this prototype uses placeholder text to demonstrate the interaction.
+                </>
+              )}
+            </p>
           </div>
         )}
 
@@ -61,23 +49,11 @@ export default function DetailDrawer({ person, gen, generationLabel, relations, 
             <h3>Business &amp; philanthropy affiliations</h3>
             <div className="chip-row">
               {person.businesses.map((b) => (
-                <span className="chip" key={b}>
+                <a className="chip-link" key={b} href={`https://${b}`} target="_blank" rel="noopener noreferrer">
                   {b}
-                </span>
+                </a>
               ))}
             </div>
-          </div>
-        )}
-
-        {person.mentionedInBio && person.mentionedInBio.length > 0 && (
-          <div className="drawer__section">
-            <h3>Also mentioned in this biography</h3>
-            <p className="drawer__hint">Relationship to the family not yet confirmed.</p>
-            <ul className="mention-list">
-              {person.mentionedInBio.map((m) => (
-                <li key={m}>{m}</li>
-              ))}
-            </ul>
           </div>
         )}
 

@@ -68,6 +68,38 @@ export function getRelations(index, person) {
   return { spouses: person.spouses || [], children: person.children || [] };
 }
 
+// Groups a person's children by which marriage they came from, via each
+// child's `parentSpouseId` (only set for a remarriage, e.g. Hayat Jameel's
+// kids). Children with no tag fall into one default group keyed by the
+// person's own id — the common case, behaviorally identical to having one
+// undivided child list. Each group gets its own expand/collapse state and
+// its own connector-line departure point, so "collapse Saif's kids" and
+// "collapse Marwan's kid" are independent instead of one combined toggle
+// that can't tell the two marriages apart.
+export function groupChildrenBySpouse(person) {
+  const children = person.children || [];
+  const bySpouseId = new Map();
+  const defaultChildren = [];
+
+  children.forEach((child) => {
+    if (child.parentSpouseId) {
+      if (!bySpouseId.has(child.parentSpouseId)) bySpouseId.set(child.parentSpouseId, []);
+      bySpouseId.get(child.parentSpouseId).push(child);
+    } else {
+      defaultChildren.push(child);
+    }
+  });
+
+  const groups = [];
+  if (defaultChildren.length > 0 || bySpouseId.size === 0) {
+    groups.push({ key: person.id, spouseId: null, children: defaultChildren });
+  }
+  bySpouseId.forEach((kids, spouseId) => {
+    groups.push({ key: `${person.id}:${spouseId}`, spouseId, children: kids });
+  });
+  return groups;
+}
+
 // Each row entry carries `isGroupStart` — true when it's the first of a
 // new parent's children in that row — so renderers can add a visual gap
 // between sibling clusters that belong to different parents. Without it,
@@ -77,7 +109,7 @@ export function buildVisibleRows(root, collapsed, forceOpenIds) {
   const order = [];
   const rowMap = new Map();
   const edges = [];
-  const isOpen = (person) => forceOpenIds.has(person.id) || !collapsed.has(person.id);
+  const isGroupOpen = (group) => forceOpenIds.has(group.key) || !collapsed.has(group.key);
 
   function walk(person, gen, parentId) {
     if (!rowMap.has(gen)) {
@@ -88,13 +120,14 @@ export function buildVisibleRows(root, collapsed, forceOpenIds) {
     const isGroupStart = row.length > 0 && row[row.length - 1].parentId !== parentId;
     row.push({ person, parentId, isGroupStart });
 
-    const kids = person.children || [];
-    if (kids.length > 0 && isOpen(person)) {
-      kids.forEach((child) => {
-        edges.push({ parentId: person.id, childId: child.id, childGen: gen + 1 });
-        walk(child, gen + 1, person.id);
-      });
-    }
+    groupChildrenBySpouse(person).forEach((group) => {
+      if (group.children.length > 0 && isGroupOpen(group)) {
+        group.children.forEach((child) => {
+          edges.push({ parentId: person.id, childId: child.id, childGen: gen + 1, spouseId: group.spouseId });
+          walk(child, gen + 1, person.id);
+        });
+      }
+    });
   }
 
   walk(root, 0, null);
