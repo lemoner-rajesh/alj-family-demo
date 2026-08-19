@@ -140,11 +140,20 @@ re-selects that person.
   background spans the row's full height — without that, horizontally-scrolling cards show through above
   and below the label.
 
-### HTTP Basic Auth (`basicAuthMiddleware.js`, `vite.config.js`)
-Opt-in: only active if `BASIC_AUTH_USER`/`BASIC_AUTH_PASS` are set. Real server-side check via a Vite
-`configureServer`/`configurePreviewServer` plugin, so credentials never ship in the client bundle. This
-only protects `npm run dev`/`npm run preview` (a Node server) — it does **not** protect a static deploy
-(e.g. Vercel serving `dist/`), which would need the host's own equivalent (Edge Middleware, etc.).
+### HTTP Basic Auth (`basicAuthMiddleware.js`, `middleware.js`, `vite.config.js`)
+Opt-in: only active if `BASIC_AUTH_USER`/`BASIC_AUTH_PASS` are set. Two separate enforcement points, both
+reading the same two env var names but from different places:
+- `basicAuthMiddleware.js` is a real server-side check via a Vite `configureServer`/`configurePreviewServer`
+  plugin (credentials never ship in the client bundle), reading `.env`. Only covers `npm run dev`/
+  `npm run preview` — a Node server. It does **not** run for a static deploy at all.
+- `middleware.js` (root-level) is Vercel Edge Middleware, the equivalent for the static `dist/` Vercel
+  actually serves — it runs at the edge in front of every request (matcher `/:path*`, so static assets are
+  covered too, not just `/`), before any file is served. Reads the env vars from the Vercel project's own
+  Settings → Environment Variables, not `.env` — that file never reaches the deployed edge runtime, so it
+  has to be set there separately. Same opt-in fallback as local dev: unset either var and auth is skipped
+  rather than failing closed.
+Other static hosts (Netlify, GitHub Pages, ...) would need their own equivalent again — `middleware.js` is
+Vercel-specific.
 
 ### Deployment
 `vercel.json` has a catch-all rewrite to `index.html`, needed for client-side routing to survive a hard
