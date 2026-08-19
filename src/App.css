@@ -919,9 +919,9 @@
   }
 }
 
-.treeWrapper html,
-.treeWrapper body,
- .treeWrapper .app-header {
+html,
+body,
+ .app-header {
   background: transparent;
 }
 
