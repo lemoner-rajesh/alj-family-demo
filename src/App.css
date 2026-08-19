@@ -920,9 +920,8 @@
 }
 
 html,
-body,
- .app-header {
-  background: transparent;
+body{
+  background: transparent !important;
 }
 
 html,
