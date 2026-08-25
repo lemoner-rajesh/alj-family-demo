@@ -1,0 +1,62 @@
+/* Brand fonts, uploaded to src/assets/fonts/. ARSMaquettePro is the app-wide
+   sans-serif; TheSeasons is used only for "The Jameel Family" title. */
+
+@font-face {
+  font-family: "ARSMaquettePro";
+  src:
+    url("./assets/fonts/ARSMaquettePro-Light.woff2") format("woff2"),
+    url("./assets/fonts/ARSMaquettePro-Light.woff") format("woff");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "ARSMaquettePro";
+  src:
+    url("./assets/fonts/ARSMaquettePro-Regular.woff2") format("woff2"),
+    url("./assets/fonts/ARSMaquettePro-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "ARSMaquettePro";
+  src:
+    url("./assets/fonts/ARSMaquettePro-Medium.woff2") format("woff2"),
+    url("./assets/fonts/ARSMaquettePro-Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "ARSMaquettePro";
+  src:
+    url("./assets/fonts/ARSMaquettePro-Bold.woff2") format("woff2"),
+    url("./assets/fonts/ARSMaquettePro-Bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "TheSeasons";
+  src:
+    url("./assets/fonts/TheSeasonsRegular.woff2") format("woff2"),
+    url("./assets/fonts/TheSeasonsRegular.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "TheSeasons";
+  src:
+    url("./assets/fonts/TheSeasonsBold.woff2") format("woff2"),
+    url("./assets/fonts/TheSeasonsBold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}

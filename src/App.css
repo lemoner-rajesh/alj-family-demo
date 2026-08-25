@@ -4,6 +4,45 @@
   min-height: 100svh;
 }
 
+/* ---------- Video option page ---------- */
+/* Scoped entirely under .video-page so none of it touches the base
+   .app-header/.app-main rules the main index page (HomePage.jsx) uses. */
+
+.video-page {
+  position: relative;
+  z-index: 1;
+}
+
+.video-page__bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.video-page__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+}
+
+.video-page .app-header {
+  background: rgba(26, 58, 58, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.video-page .app-main {
+  background: var(--surface-translucent, rgba(0, 0, 0, 0.5));
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
 /* ---------- Header ---------- */
 /* Deliberately a fixed dark theme, independent of the light --text/--surface
    vars used everywhere else — this is a distinct branded header bar, not
@@ -30,8 +69,9 @@
 }
 
 .app-header__title h1 {
+  font-family: var(--display);
   font-size: 1.35rem;
-  font-weight: 700;
+  font-weight: 500;
   letter-spacing: -0.01em;
   color: var(--hdr-fg);
 }
@@ -580,6 +620,119 @@
   left: 50%;
   margin-top: 0;
   transform: translate(-50%, 50%);
+}
+
+/* ---------- Wedding Option 1 (sequential, ordinal-labeled marriages) ---------- */
+
+.wo1-marriage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  gap: 2px;
+}
+
+.wo1-marriage__ordinal {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* ---------- Wedding Option 2 (Box 1 above, Box 2 below with two halves) ---------- */
+/* Box 1 (the primary's own card) is enlarged and sits on its own row; Box 2
+   sits below it — one bordered container split into two side-by-side
+   halves, one per spouse, instead of two separate chips/cards. */
+
+.wo2-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.wo2-primary-box .person-card {
+  width: 320px;
+}
+
+.wo2-stack {
+  display: flex;
+  flex-direction: row;
+  width: 320px;
+  height: 84px;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(30, 25, 15, 0.05);
+}
+
+.wo2-stack__spouse {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  padding: 8px 13px;
+  background: var(--item-bg-alt);
+  border: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.wo2-stack__spouse:not(:last-child) {
+  border-right: 1px solid var(--border);
+}
+
+.wo2-stack__spouse:hover {
+  background: var(--accent-soft);
+}
+
+.wo2-stack__spouse.is-selected {
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.wo2-stack__spouse.is-match {
+  box-shadow: inset 0 0 0 2px var(--bio);
+}
+
+.wo2-stack__name {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.2;
+}
+
+.wo2-stack__years {
+  font-size: 0.66rem;
+  color: var(--text-muted);
+}
+
+.wo2-toggle-row {
+  display: flex;
+  width: 320px;
+}
+
+.wo2-toggle-cell {
+  flex: 1;
+  display: flex;
+  justify-content: center;
 }
 
 /* ---------- Timeline view ---------- */
