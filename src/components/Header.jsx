@@ -78,22 +78,38 @@ export default function Header({
 
         {view === "tree" && generationGroups.length > 0 && (
           <div className="gen-controls">
-            {generationGroups.map(({ gen, ids, label }) => {
-              const anyExpanded = ids.some((id) => forceOpenIds.has(id) || !collapsed.has(id));
-              return (
-                <button
-                  key={gen}
-                  type="button"
-                  className={`gen-controls__btn gen-${genColorIndex(gen)}`}
-                  onClick={() => onToggleGeneration(ids, anyExpanded)}
-                  aria-label={anyExpanded ? `Collapse all of ${label}` : `Expand all of ${label}`}
-                  title={anyExpanded ? `Collapse all of ${label}` : `Expand all of ${label}`}
-                >
-                  <span className="gen-controls__icon">{anyExpanded ? "−" : "+"}</span>
-                  {label}
-                </button>
-              );
-            })}
+            {(() => {
+              // Collapsing a generation hides every deeper generation nested
+              // under it, so once we hit a collapsed one, every later button
+              // has nothing visible left to toggle — disable it until the
+              // ancestor is expanded again.
+              let blockedByAncestor = false;
+              return generationGroups.map(({ gen, ids, label }) => {
+                const anyExpanded = ids.some((id) => forceOpenIds.has(id) || !collapsed.has(id));
+                const disabled = blockedByAncestor;
+                if (!anyExpanded) blockedByAncestor = true;
+                return (
+                  <button
+                    key={gen}
+                    type="button"
+                    className={`gen-controls__btn gen-${genColorIndex(gen)}`}
+                    onClick={() => onToggleGeneration(ids, anyExpanded)}
+                    disabled={disabled}
+                    aria-label={anyExpanded ? `Collapse all of ${label}` : `Expand all of ${label}`}
+                    title={
+                      disabled
+                        ? `${label} is hidden until an earlier generation is expanded`
+                        : anyExpanded
+                          ? `Collapse all of ${label}`
+                          : `Expand all of ${label}`
+                    }
+                  >
+                    <span className="gen-controls__icon">{anyExpanded ? "−" : "+"}</span>
+                    {label}
+                  </button>
+                );
+              });
+            })()}
           </div>
         )}
       </div>

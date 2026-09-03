@@ -247,6 +247,16 @@
   border-color: var(--hdr-fg);
 }
 
+.gen-controls__btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.gen-controls__btn:disabled:hover {
+  background: transparent;
+  border-color: var(--hdr-outline);
+}
+
 .gen-controls__icon {
   flex-shrink: 0;
   width: 16px;
