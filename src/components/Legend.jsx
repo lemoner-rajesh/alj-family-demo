@@ -1,4 +1,4 @@
-import { GENERATION_LABELS } from "../utils/familyUtils";
+import { GENERATION_LABELS, genColorIndex } from "../utils/familyUtils";
 
 export default function Legend({ hint }) {
   return (
@@ -11,7 +11,7 @@ export default function Legend({ hint }) {
       <span className="legend__gens">
         {GENERATION_LABELS.map((label, gen) => (
           <span className="legend__gen" key={label}>
-            <span className={`legend__dot gen-${Math.min(gen, 4)}`} />
+            <span className={`legend__dot gen-${genColorIndex(gen)}`} />
             {label}
           </span>
         ))}

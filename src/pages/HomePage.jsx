@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import Header from "../components/Header";
 import TreeView from "../components/TreeView";
-import TimelineView from "../components/TimelineView";
 import DetailDrawer from "../components/DetailDrawer";
 import { familyRoot, defaultCollapsedIds } from "../data/familyData";
 import {
@@ -15,7 +14,6 @@ import {
 } from "../utils/familyUtils";
 
 export default function HomePage() {
-  const [view, setView] = useState("tree");
   const [query, setQuery] = useState("");
   const [collapsed, setCollapsed] = useState(() => new Set(defaultCollapsedIds));
   const [manualOpenIds, setManualOpenIds] = useState(() => new Set());
@@ -84,38 +82,20 @@ export default function HomePage() {
     });
   };
 
-  const handleExpandAll = () => setCollapsed(new Set());
-
-  const handleCollapseAll = () => {
-    const allGroupKeys = [];
-    flat.forEach((e) => {
-      if (e.isSpouse || e.generation < MIN_COLLAPSIBLE_GEN) return;
-      groupChildrenBySpouse(e.person).forEach((g) => {
-        if (g.children.length > 0) allGroupKeys.push(g.key);
-      });
-    });
-    setCollapsed(new Set(allGroupKeys));
-  };
-
   const handleSelect = (person) => setSelectedId(person.id);
 
   const handleJump = (person) => {
     const entry = index.get(person.id);
     if (entry) setManualOpenIds((prev) => new Set([...prev, ...entry.path]));
     setSelectedId(person.id);
-    setView("tree");
   };
 
   return (
     <div className="app">
       <Header
-        view={view}
-        onViewChange={setView}
         query={query}
         onQueryChange={setQuery}
         stats={stats}
-        onExpandAll={handleExpandAll}
-        onCollapseAll={handleCollapseAll}
         generationGroups={generationGroups}
         collapsed={collapsed}
         forceOpenIds={forceOpenIds}
@@ -123,19 +103,15 @@ export default function HomePage() {
       />
 
       <main className="app-main">
-        {view === "tree" ? (
-          <TreeView
-            root={familyRoot}
-            collapsed={collapsed}
-            onToggle={handleToggle}
-            selectedId={selectedId}
-            onSelect={handleSelect}
-            query={query}
-            forceOpenIds={forceOpenIds}
-          />
-        ) : (
-          <TimelineView root={familyRoot} selectedId={selectedId} onSelect={handleSelect} query={query} />
-        )}
+        <TreeView
+          root={familyRoot}
+          collapsed={collapsed}
+          onToggle={handleToggle}
+          selectedId={selectedId}
+          onSelect={handleSelect}
+          query={query}
+          forceOpenIds={forceOpenIds}
+        />
       </main>
 
       {selectedPerson && (

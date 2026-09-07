@@ -4,45 +4,6 @@
   min-height: 100svh;
 }
 
-/* ---------- Video option page ---------- */
-/* Scoped entirely under .video-page so none of it touches the base
-   .app-header/.app-main rules the main index page (HomePage.jsx) uses. */
-
-.video-page {
-  position: relative;
-  z-index: 1;
-}
-
-.video-page__bg {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  pointer-events: none;
-}
-
-.video-page__overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  background: rgba(0, 0, 0, 0.45);
-  pointer-events: none;
-}
-
-.video-page .app-header {
-  background: rgba(26, 58, 58, 0.82);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-.video-page .app-main {
-  background: var(--surface-translucent, rgba(0, 0, 0, 0.5));
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
-}
-
 /* ---------- Header ---------- */
 /* Deliberately a fixed dark theme, independent of the light --text/--surface
    vars used everywhere else — this is a distinct branded header bar, not
@@ -66,21 +27,6 @@
   align-items: center;
   gap: 24px;
   flex-wrap: wrap;
-}
-
-.app-header__title h1 {
-  font-family: var(--display);
-  font-size: 1.35rem;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  color: var(--hdr-fg);
-}
-
-.app-header__title p {
-  color: var(--hdr-fg-muted);
-  font-size: 0.8rem;
-  margin-top: 3px;
-  max-width: 520px;
 }
 
 .app-header__stats {
@@ -121,38 +67,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 18px;
   flex-wrap: wrap;
-}
-
-.view-toggle {
-  display: inline-flex;
-  gap: 8px;
-}
-
-.view-toggle button {
-  padding: 9px 22px;
-  border: 1.5px solid var(--hdr-outline);
-  border-radius: 999px;
-  background: transparent;
-  cursor: pointer;
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--hdr-fg);
-  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-}
-
-.view-toggle button:hover:not(.is-active) {
-  background: rgba(245, 247, 242, 0.1);
-  border-color: var(--hdr-fg);
-}
-
-.view-toggle button.is-active {
-  background: var(--hdr-fg);
-  color: #1a3a3a;
-  border-color: var(--hdr-fg);
 }
 
 .search-bar {
@@ -194,12 +109,14 @@
   line-height: 1;
 }
 
-.expand-controls {
-  display: flex;
-  gap: 8px;
+.gen-filter {
+  position: relative;
 }
 
-.expand-controls button {
+.gen-filter__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   border: 1.5px solid var(--hdr-outline);
   border-radius: 999px;
   background: transparent;
@@ -213,62 +130,77 @@
   transition: background 0.15s ease, border-color 0.15s ease;
 }
 
-.expand-controls button:hover {
+.gen-filter__trigger:hover,
+.gen-filter__trigger[aria-expanded="true"] {
   background: rgba(245, 247, 242, 0.1);
   border-color: var(--hdr-fg);
 }
 
-.gen-controls {
+.gen-filter__chevron {
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.gen-filter__trigger[aria-expanded="true"] .gen-filter__chevron {
+  transform: rotate(180deg);
+}
+
+.gen-filter__panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 25;
+  min-width: 220px;
+  background: var(--bg);
+  border-radius: var(--radius);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+  padding: 6px;
   display: flex;
-  gap: 8px;
-  padding-left: 8px;
-  border-left: 1.5px solid var(--hdr-outline);
+  flex-direction: column;
+  gap: 2px;
 }
 
-.gen-controls__btn {
-  display: inline-flex;
+.gen-filter__row {
+  display: flex;
   align-items: center;
-  gap: 6px;
-  border: 1.5px solid var(--hdr-outline);
-  border-radius: 999px;
+  justify-content: space-between;
+  gap: 12px;
+  border: none;
+  border-radius: calc(var(--radius) - 1px);
   background: transparent;
-  padding: 9px 16px 9px 10px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  padding: 10px 12px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text);
   cursor: pointer;
-  color: var(--hdr-fg);
-  transition: background 0.15s ease, border-color 0.15s ease;
+  text-align: left;
 }
 
-.gen-controls__btn:hover {
-  background: rgba(245, 247, 242, 0.1);
-  border-color: var(--hdr-fg);
+.gen-filter__row:hover:not(:disabled) {
+  background: var(--item-bg-alt);
 }
 
-.gen-controls__btn:disabled {
+.gen-filter__row:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
 
-.gen-controls__btn:disabled:hover {
-  background: transparent;
-  border-color: var(--hdr-outline);
+.gen-filter__label {
+  flex: 1;
 }
 
-.gen-controls__icon {
+.gen-filter__dot {
   flex-shrink: 0;
-  width: 16px;
-  height: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   background: var(--row-color);
-  color: #fff;
-  font-size: 0.72rem;
-  line-height: 1;
+  transition: background 0.15s ease;
+}
+
+.gen-filter__dot--off {
+  background: transparent;
+  border: 2px solid var(--row-color);
 }
 
 .legend__hint {
@@ -745,86 +677,6 @@
   justify-content: center;
 }
 
-/* ---------- Timeline view ---------- */
-
-.timeline {
-  padding: 30px 32px 70px;
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-  max-width: 1100px;
-  margin: 0 auto;
-}
-
-.timeline__lane {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.timeline__label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
-}
-
-.timeline__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--accent);
-}
-
-.timeline__count {
-  background: var(--accent-soft);
-  color: var(--accent);
-  padding: 1px 8px;
-  font-size: 0.68rem;
-  font-weight: 600;
-}
-
-.timeline__row {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  padding-bottom: 14px;
-  border-bottom: 1px dashed var(--border);
-}
-
-.timeline__pair {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 10px;
-}
-
-.timeline__pair .person-card {
-  width: 210px;
-  height: 118px;
-}
-
-.timeline__pair .person-card__name {
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
-  font-size: 0.86rem;
-}
-
-.timeline__child-count {
-  font-size: 0.7rem;
-  color: var(--text-muted);
-  margin-left: 2px;
-  white-space: nowrap;
-}
-
 /* ---------- Detail drawer ---------- */
 
 .drawer-backdrop {
@@ -1067,10 +919,6 @@
 @media (max-width: 760px) {
   .app-header {
     padding: 16px 16px 12px;
-  }
-
-  .app-header__title p {
-    display: none;
   }
 
   .app-header__stats {
