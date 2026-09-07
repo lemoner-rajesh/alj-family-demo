@@ -17,7 +17,7 @@
   position: sticky;
   top: 0;
   z-index: 20;
-  background: #1a3a3a;
+  background: rgba(26, 58, 58, 0.7);
   padding: 22px 28px 18px;
 }
 
@@ -934,6 +934,9 @@
     width: 100vw;
     max-width: 100vw;
   }
+  .tree-canvas {
+    padding: 20px 15px 20px;
+}
 }
 
 html,
