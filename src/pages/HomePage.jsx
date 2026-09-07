@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Header from "../components/Header";
 import TreeView from "../components/TreeView";
 import DetailDrawer from "../components/DetailDrawer";
@@ -18,42 +18,6 @@ export default function HomePage() {
   const [collapsed, setCollapsed] = useState(() => new Set(defaultCollapsedIds));
   const [manualOpenIds, setManualOpenIds] = useState(() => new Set());
   const [selectedId, setSelectedId] = useState(null);
-
-  useEffect(() => {
-    const sendHeight = () => {
-      const height = Math.max(
-        document.documentElement.scrollHeight,
-        document.body.scrollHeight
-      );
-
-      window.parent.postMessage(
-        {
-          type: "TREE_HEIGHT",
-          height,
-        },
-        window.location.origin
-      );
-    };
-
-    // Send initial height
-    sendHeight();
-
-    // Detect changes to the tree height
-    const resizeObserver = new ResizeObserver(() => {
-      sendHeight();
-    });
-
-    resizeObserver.observe(document.documentElement);
-    resizeObserver.observe(document.body);
-
-    // Also handle browser resize
-    window.addEventListener("resize", sendHeight);
-
-    return () => {
-      resizeObserver.disconnect();
-      window.removeEventListener("resize", sendHeight);
-    };
-  }, []);
 
   const index = useMemo(() => buildIndex(familyRoot), []);
   const flat = useMemo(() => flattenPeople(familyRoot), []);
